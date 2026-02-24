@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍄 Teemo Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── DESIGN TOKENS ─────────────────────────────── */
+  :root {
+    --bg:        #faf8f6;
+    --surface:   #ffffff;
+    --border:    #ede8e3;
+    --rose:      #d4726a;
+    --rose-soft: #f5e8e7;
+    --blush:     #f0d9d7;
+    --mauve:     #9b7fa0;
+    --mauve-soft:#f0eaf4;
+    --sage:      #6a917a;
+    --sage-soft: #e6f0eb;
+    --sand:      #c4a882;
+    --sand-soft: #f5ede0;
+    --text:      #2e2420;
+    --muted:     #9e8c84;
+    --lighter:   #c8b8b0;
+    --radius:    12px;
+    --radius-sm: 8px;
+    --radius-pill: 99px;
+  }
+
+  /* ── RESET & BASE ──────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── SCROLLBAR ─────────────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 99px; }
+
+  /* ── LAYOUT ────────────────────────────────────── */
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+  /* ── HEADER ────────────────────────────────────── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 0 18px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner {
+    display: flex; align-items: center; gap: 14px;
+    justify-content: space-between; flex-wrap: wrap;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { font-size: 28px; animation: float 4s ease-in-out infinite; display: block; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  .logo-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .logo-sub { font-size: 11px; color: var(--lighter); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
+  .header-links { display: flex; gap: 12px; }
+  .header-link {
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .header-link:hover { color: var(--rose); }
+
+  /* ── NAV TABS ──────────────────────────────────── */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  nav::-webkit-scrollbar { height: 0; }
+  .nav-inner { display: flex; gap: 0; padding: 0 20px; }
+  .tab-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--muted); padding: 14px 18px;
+    border-bottom: 2px solid transparent;
+    transition: all .2s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--rose); }
+  .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); font-weight: 600; }
+
+  /* ── PAGE SECTIONS ─────────────────────────────── */
+  .page { display: none; padding: 28px 0 60px; }
+  .page.active { display: block; }
+
+  /* ── TYPOGRAPHY ────────────────────────────────── */
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; color: var(--text);
+    margin-bottom: 20px;
+  }
+  h3 {
+    font-size: 13px; font-weight: 600; letter-spacing: .5px;
+    text-transform: uppercase; color: var(--lighter);
+    margin-bottom: 10px;
+  }
+
+  /* ── CARDS ─────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  /* ── BADGES / PILLS ────────────────────────────── */
+  .badge {
+    display: inline-flex; align-items: center;
+    border-radius: var(--radius-pill);
+    padding: 3px 11px; font-size: 12px; font-weight: 600;
+    line-height: 1.5;
+  }
+  .badge-rose   { background: var(--rose-soft);  color: var(--rose); }
+  .badge-mauve  { background: var(--mauve-soft); color: var(--mauve); }
+  .badge-sage   { background: var(--sage-soft);  color: var(--sage); }
+  .badge-sand   { background: var(--sand-soft);  color: var(--sand); }
+  .badge-muted  { background: #f4f1ee; color: var(--muted); }
+
+  /* ── THREAT COLORS ─────────────────────────────── */
+  .threat-easy    { background: var(--sage-soft);  color: var(--sage); }
+  .threat-medium  { background: var(--sand-soft);  color: var(--sand); }
+  .threat-hard    { background: #fde8e8;            color: #c05050; }
+  .threat-extreme { background: var(--rose-soft);  color: var(--rose); }
+
+  /* ── SEARCH ────────────────────────────────────── */
+  .search-row { display: flex; gap: 0; margin-bottom: 16px; }
+  .search-input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    border-right: none; color: var(--text);
+    padding: 11px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+    border-radius: var(--radius) 0 0 var(--radius); outline: none;
+    transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--rose); }
+  .search-input::placeholder { color: var(--lighter); }
+  .search-btn {
+    background: var(--rose); border: 1px solid var(--rose);
+    color: white; padding: 11px 20px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    transition: all .2s;
+  }
+  .search-btn:hover { background: #c4635b; border-color: #c4635b; }
+
+  /* ── CHIPS ─────────────────────────────────────── */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-pill); padding: 5px 13px;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    cursor: pointer; transition: all .15s; text-transform: capitalize;
+  }
+  .chip:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-soft); }
+
+  /* ── MATCHUP RESULT ────────────────────────────── */
+  #matchup-result { animation: fadeUp .25s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .matchup-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .matchup-name { font-family: 'DM Serif Display', serif; font-size: 22px; text-transform: capitalize; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+  /* ── TIPS ──────────────────────────────────────── */
+  .tip {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 9px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px; color: #4a3838;
+  }
+  .tip:last-child { border-bottom: none; padding-bottom: 0; }
+  .tip-dot { color: var(--blush); flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+
+  /* ── ACCORDION ─────────────────────────────────── */
+  .accordion { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .accordion-btn {
+    width: 100%; background: var(--surface); border: none;
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--text); text-align: left; transition: background .15s;
+  }
+  .accordion-btn:hover { background: var(--bg); }
+  .accordion-btn .left { display: flex; align-items: center; gap: 10px; }
+  .accordion-icon { font-size: 13px; color: var(--lighter); transition: transform .2s; }
+  .accordion.open .accordion-icon { transform: rotate(90deg); }
+  .accordion.open .accordion-btn { color: var(--rose); }
+  .accordion-body { display: none; padding: 0 20px 16px; background: var(--surface); }
+  .accordion.open .accordion-body { display: block; animation: fadeUp .2s ease; }
+
+  /* ── BUILD ITEMS ───────────────────────────────── */
+  .item-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 0; border-bottom: 1px solid var(--border); cursor: default;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-num {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    background: var(--rose-soft); color: var(--rose);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .item-emoji { font-size: 20px; flex-shrink: 0; }
+  .item-info { flex: 1; }
+  .item-name { font-weight: 600; font-size: 14px; color: var(--text); }
+  .item-stat { font-size: 12px; color: var(--muted); }
+  .item-why {
+    font-size: 13px; color: var(--muted); margin-top: 4px;
+    display: none;
+  }
+  .item-row:hover .item-why { display: block; }
+  .item-row:hover .item-name { color: var(--rose); }
+
+  /* ── RUNE ROWS ─────────────────────────────────── */
+  .rune-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+
+  /* ── COUNTER ROWS ──────────────────────────────── */
+  .counter-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 11px 0; border-bottom: 1px solid var(--border);
+  }
+  .counter-row:last-child { border-bottom: none; }
+  .wr-badge {
+    font-size: 12px; font-weight: 700; min-width: 44px; text-align: center;
+    padding: 3px 8px; border-radius: var(--radius-sm); flex-shrink: 0;
+  }
+  .counter-name { font-weight: 600; font-size: 14px; }
+  .counter-why { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* ── ABILITY CARD ──────────────────────────────── */
+  .ability-key-badge {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif; font-size: 16px; font-weight: 400;
+  }
+  .ability-tip {
+    margin-top: 10px; padding: 10px 14px;
+    background: var(--bg); border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--muted); border-left: 3px solid var(--blush);
+  }
+
+  /* ── SKILL ORDER VISUAL ────────────────────────── */
+  .skill-order { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .sk {
+    padding: 5px 14px; border-radius: var(--radius-pill);
+    font-weight: 700; font-size: 13px;
+  }
+  .sk-arrow { color: var(--lighter); font-size: 16px; }
+
+  /* ── COMBO STEPS ───────────────────────────────── */
+  .combo-step {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .combo-step:last-child { border-bottom: none; }
+  .combo-num { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--lighter); flex-shrink: 0; min-width: 16px; }
+  .combo-label { font-size: 12px; font-weight: 600; padding: 4px 11px; border-radius: var(--radius-pill); flex-shrink: 0; }
+  .combo-desc { font-size: 13px; color: var(--muted); }
+
+  /* ── MISTAKE ROW ───────────────────────────────── */
+  .mistake { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .mistake:last-child { border-bottom: none; }
+  .mistake-x { color: #e0a0a0; font-size: 14px; flex-shrink: 0; }
+
+  /* ── SECTION DIVIDER ───────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* ── ROLE TOGGLE ───────────────────────────────── */
+  .role-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+  .role-btn {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--muted); padding: 8px 18px; border-radius: var(--radius-pill);
+    cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    transition: all .2s;
+  }
+  .role-btn:hover { border-color: var(--rose); color: var(--rose); }
+  .role-btn.active { background: var(--rose); border-color: var(--rose); color: white; }
+
+  /* ── FOOTER ────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border); background: var(--surface);
+    padding: 18px 0; text-align: center;
+    font-size: 12px; color: var(--lighter);
+  }
+
+  /* ── RESPONSIVE ────────────────────────────────── */
+  @media (max-width: 540px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .logo-title { font-size: 18px; }
+    .header-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ───────────────────────────────────── -->
+<header>
+  <div class="wrap">
+    <div class="header-inner">
+      <div class="header-left">
+        <span class="logo-icon">🍄</span>
+        <div>
+          <div class="logo-title">Teemo Field Guide</div>
+          <div class="logo-sub">Patch 26.4 · Top &amp; Support</div>
+        </div>
+      </div>
+      <div class="header-links">
+        <a class="header-link" href="https://lolalytics.com/lol/teemo/build/" target="_blank">LoLalytics ↗</a>
+        <a class="header-link" href="https://u.gg/lol/champions/teemo/build" target="_blank">U.GG ↗</a>
+        <a class="header-link" href="https://www.mobafire.com/league-of-legends/build/the-passionate-guide-to-teemo-456667" target="_blank">Mobafire ↗</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── NAV ─────────────────────────────────────── -->
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <button class="tab-btn active" onclick="showTab('matchup',this)">Matchup</button>
+      <button class="tab-btn" onclick="showTab('counters',this)">Counters</button>
+      <button class="tab-btn" onclick="showTab('build',this)">Build</button>
+      <button class="tab-btn" onclick="showTab('basics',this)">Basics</button>
+      <button class="tab-btn" onclick="showTab('abilities',this)">Abilities</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  MATCHUP TAB                                   -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="tab-matchup" class="page active">
+  <div class="wrap">
+
+    <div class="card">
+      <h3>Who are you playing against?</h3>
+      <div class="search-row">
+        <input class="search-input" id="search-input" placeholder="Type a champion name..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="search-btn" onclick="doSearch()">Search</button>
+      </div>
+      <h3 style="margin-bottom:8px">Quick select</h3>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div id="matchup-result" style="display:none"></div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  COUNTERS TAB                                  -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="tab-counters" class="page">
+  <div class="wrap">
+
+    <h2>Counters</h2>
+
+    <div class="card" style="border-left:3px solid var(--rose)">
+      <h3>Avoid these · Teemo loses here</h3>
+      <div id="bad-list"></div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--sage)">
+      <h3>Target these · Teemo wins here</h3>
+      <div id="good-list"></div>
+    </div>
+
+    <div class="card">
+      <h3>Surviving a bad matchup</h3>
+      <div class="tip"><span class="tip-dot">·</span><span>Farm under your tower — don't fight, just CS safely</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Ask your jungler for an early gank — changes the whole matchup</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Buy Banshee's Veil vs CC-heavy counters (Cassiopeia, Malphite)</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Take Fleet Footwork rune instead of PTA for more survivability</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Split push the opposite side instead of directly fighting your counter</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  BUILD TAB                                     -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="tab-build" class="page">
+  <div class="wrap">
+
+    <h2>Build</h2>
+
+    <div class="role-toggle">
+      <button class="role-btn active" id="btn-top" onclick="setRole('top')">Top Lane</button>
+      <button class="role-btn" id="btn-support" onclick="setRole('support')">Support</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="card" style="margin-bottom:0">
+        <h3>Summoner Spells</h3>
+        <div style="font-family:'DM Serif Display',serif;font-size:16px;color:var(--text)">Flash + Ignite</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">Always. Flash to escape or gap-close for kills. Ignite for lane kill pressure.</div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <h3>Starting Items</h3>
+        <div id="start-items" style="font-family:'DM Serif Display',serif;font-size:16px;color:var(--text)">Doran's Ring</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">+ 2× Health Potions</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Core Build — in order (Patch 26.4 · LoLalytics verified)</h3>
+      <div style="font-size:12px;color:var(--lighter);margin-bottom:14px">Hover each item to see why you build it</div>
+      <div id="items-list"></div>
+    </div>
+
+    <div class="card">
+      <h3>Skill Order</h3>
+      <div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">Standard (most matchups)</div>
+        <div class="skill-order">
+          <span class="sk badge-sage">Q ①</span>
+          <span class="sk-arrow">→</span>
+          <span class="sk badge-mauve">E ②</span>
+          <span class="sk-arrow">→</span>
+          <span class="sk badge-muted">W ③</span>
+          <span class="sk-arrow">→</span>
+          <span class="sk badge-rose">R at 6 / 11 / 16</span>
+        </div>
+        <div style="font-size:12px;color:var(--lighter);margin-top:6px">Take Q at level 1, E at level 2, W at level 3 — then max E first for poison damage</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">vs Auto-Attackers (Fiora, Tryndamere, Irelia)</div>
+        <div class="skill-order">
+          <span class="sk badge-rose">Q ①</span>
+          <span class="sk-arrow">→</span>
+          <span class="sk badge-mauve">E ②</span>
+          <span class="sk-arrow">→</span>
+          <span class="sk badge-muted">W ③</span>
+          <span class="sk-arrow">→</span>
+          <span class="sk badge-rose">R at 6 / 11 / 16</span>
+        </div>
+        <div style="font-size:12px;color:var(--lighter);margin-top:6px">Max Q first — your blind is your survival tool against these champs</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Runes — Press the Attack</h3>
+      <div style="margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">Keystone</div>
+        <span class="badge badge-rose" style="font-size:13px;padding:5px 14px">⚡ Press the Attack</span>
+        <div style="font-size:12px;color:var(--lighter);margin-top:6px">Hit the same enemy 3 times → they take 8% more damage from everything. Works perfectly with your poison stacking.</div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">Primary (Precision)</div>
+        <div class="rune-row">
+          <span class="badge badge-mauve">Triumph</span>
+          <span class="badge badge-mauve">Legend: Alacrity</span>
+          <span class="badge badge-mauve">Coup de Grace</span>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">Secondary (Resolve)</div>
+        <div class="rune-row">
+          <span class="badge badge-sage">Bone Plating</span>
+          <span class="badge badge-sage">Overgrowth</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">Shards</div>
+        <div class="rune-row">
+          <span class="badge badge-sand">Adaptive Force</span>
+          <span class="badge badge-sand">Attack Speed</span>
+          <span class="badge badge-sand">Ability Haste</span>
+        </div>
+      </div>
+      <hr class="divider">
+      <div style="font-size:12px;color:var(--lighter)">Alternatives: <strong style="color:var(--muted)">Fleet Footwork</strong> if you're struggling to survive · <strong style="color:var(--muted)">Summon Aery</strong> if you prefer pure poke</div>
+    </div>
+
+    <div class="card">
+      <h3>Situational Items</h3>
+      <div class="counter-row">
+        <div><div class="counter-name">Morellonomicon</div><div class="counter-why">Enemy has heavy healing — Soraka, Aatrox, Vladimir, Mundo</div></div>
+      </div>
+      <div class="counter-row">
+        <div><div class="counter-name">Zhonya's Hourglass</div><div class="counter-why">Assassins keep diving you — 2.5s invincibility window</div></div>
+      </div>
+      <div class="counter-row">
+        <div><div class="counter-name">Banshee's Veil</div><div class="counter-why">Single key ability counters you — Blitzcrank, Lux, Cassiopeia</div></div>
+      </div>
+      <div class="counter-row">
+        <div><div class="counter-name">Void Staff</div><div class="counter-why">Enemies stacking magic resist — swap in for Shadowflame</div></div>
+      </div>
+    </div>
+
+    <div id="support-card" style="display:none" class="card" style="border-left:3px solid var(--mauve)">
+      <h3>Support Specific Tips</h3>
+      <div class="tip"><span class="tip-dot">·</span><span>Start Spellthief's Edge instead of Doran's Ring for support gold income</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>The "where is Teemo" trick — appear, then vanish. They'll be afraid to walk up</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Best ADC partners: Jhin, Caitlyn, Lucian, Tristana</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Your job: poke from bushes, Q when ADC goes in, mushroom lane bushes constantly</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span>Worst partners: Ezreal, Ashe, Vayne — they need engage, not poke</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  BASICS TAB                                    -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="tab-basics" class="page">
+  <div class="wrap">
+
+    <h2>Fundamentals</h2>
+    <div id="basics-list"></div>
+
+    <div class="card" style="border-left:3px solid #e0a0a0;margin-top:20px">
+      <h3>Common Beginner Mistakes</h3>
+      <div class="mistake"><span class="mistake-x">✕</span><span style="font-size:14px">Stacking shrooms in the same spot — they don't stack, you're wasting charges</span></div>
+      <div class="mistake"><span class="mistake-x">✕</span><span style="font-size:14px">Dropping shrooms under a chaser — they need 1 second to arm, place them <em>ahead</em></span></div>
+      <div class="mistake"><span class="mistake-x">✕</span><span style="font-size:14px">Fighting when Q is on cooldown vs auto-attack champs — back off and wait</span></div>
+      <div class="mistake"><span class="mistake-x">✕</span><span style="font-size:14px">Not using Q as an auto reset (auto → Q → auto = 3 hits instantly)</span></div>
+      <div class="mistake"><span class="mistake-x">✕</span><span style="font-size:14px">Grouping for teamfights mid/late — your job is usually to split push</span></div>
+      <div class="mistake"><span class="mistake-x">✕</span><span style="font-size:14px">Skipping Control Wards — they're cheap and destroy enemy vision + shrooms</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  ABILITIES TAB                                 -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="tab-abilities" class="page">
+  <div class="wrap">
+
+    <h2>Abilities</h2>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Click each ability to expand. Pay special attention to E — most beginners misunderstand it.</div>
+
+    <div id="abilities-list"></div>
+
+    <div class="card" style="margin-top:20px">
+      <h3>Fight Combo — Step by Step</h3>
+      <div class="combo-step">
+        <span class="combo-num">1</span>
+        <span class="combo-label badge-sage">Check Q</span>
+        <span class="combo-desc">Is Q available? If yes, go fight. If not vs an auto-attack champ, wait for it to come back.</span>
+      </div>
+      <div class="combo-step">
+        <span class="combo-num">2</span>
+        <span class="combo-label badge-mauve">Stealth exit</span>
+        <span class="combo-desc">If in a bush, wait 1.5s for invisible passive — exit for the attack speed burst.</span>
+      </div>
+      <div class="combo-step">
+        <span class="combo-num">3</span>
+        <span class="combo-label badge-sand">Auto → Q</span>
+        <span class="combo-desc">Land one auto first, then immediately Q — this resets your auto for a free extra hit!</span>
+      </div>
+      <div class="combo-step">
+        <span class="combo-num">4</span>
+        <span class="combo-label badge-muted">Keep autoing</span>
+        <span class="combo-desc">3 total hits triggers Press the Attack → they take 8% more damage from everything.</span>
+      </div>
+      <div class="combo-step">
+        <span class="combo-num">5</span>
+        <span class="combo-label badge-rose">Evaluate</span>
+        <span class="combo-desc">Q back up? Stay and keep fighting. Q down vs auto-attacker? Kite back and poke from range.</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:10px">
+      <h3>Things People Get Wrong</h3>
+      <div class="tip"><span class="tip-dot">·</span><span><strong>E is not an active ability</strong> — you can't press it. It's always-on poison on every auto attack.</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span><strong>Shrooms need 1 second to arm</strong> — drop them under someone's feet and they walk right through.</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span><strong>Q only blinds auto attacks</strong> — mages like Cassiopeia are not countered by your blind at all.</span></div>
+      <div class="tip"><span class="tip-dot">·</span><span><strong>Active W cannot be removed by damage</strong> — but the passive speed is lost when you get hit.</span></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    🍄 &nbsp; Based on LoLalytics + Sovereign Kitten's Mobafire guide &nbsp;·&nbsp; Patch 26.4
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────
+// DATA — edit these objects to update the guide!
+// ─────────────────────────────────────────────────────
+
+const MATCHUPS = {
+  nasus:      { threat:'easy',    type:'Physical',    tip:'Deny his Q stacks every time he walks up to CS. Keep poison ticking constantly — he has no range to fight back early. He snowballs into an unkillable monster past 300 stacks so bully aggressively.', skillOrder:'E max', avoid:"Don't let him stack passively. Respect his W slow if he catches you.", shroom:'Tribrush, river, his path to minions' },
+  tryndamere: { threat:'easy',    type:'Physical',    tip:'One of your best matchups. Q-blind counters his entire kit since he needs autos for everything. He literally cannot kill you while blinded. Bully hard pre-6 and get a lead.', skillOrder:'Q max early, then E', avoid:"Don't fight when he pops his R — he can't die for 5 seconds. Back off!", shroom:'Escape paths for when he chases after R' },
+  garen:      { threat:'easy',    type:'Physical',    tip:"Pure bully matchup. He has no range so kite and poke forever. Keep poison ticking so his passive HP regen never activates. Q-blind before his E spin — it deals 0 damage when he's blinded.", skillOrder:'E max', avoid:"Don't let him close the gap when his Q silence is active.", shroom:'Behind you as an escape route' },
+  darius:     { threat:'medium',  type:'Physical',    tip:"Respect his W hook range and Q pull. His Q is a donut — the outer ring heals him, the inner ring doesn't. Stay close or far, not mid-range. Q-blind before he autos. Never fight at 5 bleed stacks.", skillOrder:'E max — poke from range', avoid:"His W grab. Fighting at 5 Hemorrhage stacks. Getting pulled in.", shroom:'His chase path toward you' },
+  volibear:   { threat:'medium',  type:'Magic/Phys',  tip:'He can flip you with Q then bite with W. Q-blind him before or during the flip to cancel his follow-up damage. Watch for level 1 Q cheese — he moves faster than you expect.', skillOrder:'Q first levels, then E max', avoid:"Don't be point-blank when he has Q ready — he's fast.", shroom:'His charge path toward you' },
+  renekton:   { threat:'medium',  type:'Physical',    tip:"Strong early but falls off hard after 25 minutes. Stay behind minions to block his dash. Q-blind when he dashes on you. Just survive the early game and you'll win the late game.", skillOrder:'Q max', avoid:"50+ fury → don't fight. His E → W empowered bite combo hurts a lot.", shroom:'Side entrances and behind you' },
+  aatrox:     { threat:'hard',    type:'Physical',    tip:"Sidestep his Q SIDEWAYS, not backwards — it hits a wide zone. His W chains can be blocked by minions. Q-blind only when his cooldowns are all down and he's running you down.", skillOrder:'E max — ranged poke only', avoid:"Standing in his Q zones. Getting chained by W. Sidestep everything!", shroom:'Edges of his Q reach and escape routes' },
+  fiora:      { threat:'hard',    type:'Physical',    tip:"Her W Riposte BLOCKS your Q blind. Bait it out — fake walking up, she'll W, then use Q after (~18s cooldown). She outscales you hard so get a lead early or play safely.", skillOrder:'Q first — blind is critical vs her autos', avoid:"Extended fights. Using Q into her W. Don't let her hit all 4 vitals.", shroom:'Escape routes — she\'s very mobile' },
+  mordekaiser: { threat:'hard',   type:'Magic',       tip:"Dodge his Q swing and E pull. If he ults you into the Death Realm, hide in a nearby bush and use passive stealth to survive the 7 seconds. Buy Banshee's Veil to block his pull.", skillOrder:'E max — poke before he can engage', avoid:"His full combo if caught. Buy Banshee's vs fed Morde.", shroom:"Around his likely engage angles" },
+  cassiopeia: { threat:'extreme', type:'Magic',       tip:"Your hardest matchup (~44% win rate). Her Q+E spam out-ranges everything, she never runs out of mana, and your Q doesn't stop her since she doesn't auto attack. Buy Banshee's Veil immediately. Turn your back to her when she ults.", skillOrder:'E max — survive and farm', avoid:"Facing her when she ults. Getting hit by Q (enables free E spam). Consider dodging.", shroom:'Dense coverage everywhere' },
+  olaf:       { threat:'extreme', type:'Physical',    tip:"Really tough matchup (~46% win rate). He has lifesteal that heals through your poison. At level 6 his ult makes him immune to all CC including your Q blind. Bully pre-6, play safe post-6.", skillOrder:'Q max pre-6 only — after that it does nothing vs his ult', avoid:"Fighting post-6 with his ult active. He outheals your poke.", shroom:'Slow him as he walks toward you' },
+  yasuo:      { threat:'extreme', type:'Physical',    tip:"His Wind Wall blocks your Q and thrown mushrooms. Wait ~20s for wind wall to come off cooldown then use Q. Rely on auto attack poison. Dodge his whirlwind Q — it enables his ult.", skillOrder:'E max — rely on poison when Q is blocked', avoid:"Throwing Q into Wind Wall. Stacked whirlwinds setting up his ult.", shroom:'Place mushrooms on the ground near him, never throw into Wind Wall' },
+  malphite:   { threat:'extreme', type:'Magic',       tip:"Harder than he looks (~47% win rate). Keep poison ticking to deny his passive shield regen. Becomes unkillable late game. His ult is a huge knockup from long range. Take Fleet Footwork and focus on CS.", skillOrder:'E max — accept you won\'t kill him, just farm', avoid:"His ult range is huge. Never bunch with teammates near him in teamfights.", shroom:'Around him when he finally walks toward you' },
+  blitzcrank: { threat:'extreme', type:'Physical',    tip:"Never stand in a straight line with him. His hook can't travel through minions — use them as shields constantly. If hooked, Q immediately to reduce follow-up. Don't hide predictably in bushes (he hooks into them).", skillOrder:'Q max — survive the grab and fight back', avoid:"Straight-line positioning. Being closer to him than your ADC.", shroom:'Bushes he uses to hide and set up hooks' },
+  thresh:     { threat:'hard',    type:'Magic/Phys',  tip:"Stand behind minions to block his hook. Q right after being hooked to reduce his follow-up damage. He gains power from souls over time so don't let him snowball early.", skillOrder:'Q max', avoid:"Hook line — always have minions between you. Watch for his E flay up close.", shroom:'Bushes and roam paths' },
+  brand:      { threat:'extreme', type:'Magic',       tip:"He burns you down very quickly. Banshee's Veil is essential. His passive bounces between champions — never stand next to your ADC. Dodge his Q stun (narrow straight line).", skillOrder:'E max — stay spread out', avoid:"Clustering with teammate. Standing in his Q line.", shroom:'All over bot lane — he roams aggressively' },
+  lux:        { threat:'medium',  type:'Magic',       tip:"Poke her out but dodge her bind (Q) → ult combo. Dodge her E circle on the ground — it detonates after a short delay. She has no escapes so bully when her Q is on cooldown.", skillOrder:'E max — out-poke her from range', avoid:"Getting rooted by Q — she ults immediately after. Stay mobile.", shroom:'Her positioning spots and bush corners' },
+  teemo:      { threat:'medium',  type:'Magic',       tip:"Mirror matchup. Buy Oracle Lens to clear their shrooms. Poke each other with Q — it's a damage race. Control wards are essential here.", skillOrder:'E max', avoid:"Walking through bushes without Oracle Lens active.", shroom:'Deeper or unexpected spots — they\'ll clear standard placements' }
+};
+
+const COUNTERS_BAD = [
+  { name:'Cassiopeia', wr:'44%', why:'Out-ranges you, Q doesn\'t stop her spells, spams you to death' },
+  { name:'Olaf',       wr:'46%', why:'Level 6 ult = immune to your blind. Outheals all your poke.' },
+  { name:'Yasuo',      wr:'47%', why:'Wind Wall blocks your Q and thrown mushrooms' },
+  { name:'Malphite',   wr:'47%', why:'Unkillable late game, passive shield, ult crushes teamfights' },
+  { name:'Yorick',     wr:'~47%',why:"Ghouls harass constantly, you can't blind all of them" },
+  { name:'Ornn',       wr:'~48%',why:"Scales into a 5k HP wall — you just can't kill him" }
+];
+
+const COUNTERS_GOOD = [
+  { name:'Nasus',      wr:'55%', why:'Deny his stacks, he has no range to fight back early' },
+  { name:'Vayne',      wr:'55%', why:'She has range but no real engage — poke her forever' },
+  { name:'Tryndamere', wr:'54%', why:'Q blinds his entire kit since he only uses autos' },
+  { name:'Renekton',   wr:'53%', why:'Strong early but falls off hard — just survive laning' },
+  { name:'Volibear',   wr:'52%', why:'Q the flip-bite combo, kite from range' }
+];
+
+const BUILD_CORE = [
+  { n:1, emoji:'👟', name:"Sorcerer's Shoes",    stat:'18 Magic Pen',   why:'Magic pen makes all your poison and Q hit harder. Rush this first every game.' },
+  { n:2, emoji:'🔥', name:"Liandry's Torment",  stat:'Burns % max HP', why:"Burns enemies for % of max HP per second. Stacks with your E poison. Destroys tanks." },
+  { n:3, emoji:'🌙', name:'Malignance',          stat:'More Shrooms',   why:'Reduces your ult (shroom) cooldown so you place more. Also boosts shroom damage.' },
+  { n:4, emoji:'✦',  name:'Shadowflame',         stat:'Burst + Pen',    why:'Burst damage and magic pen. Great when enemies are squishy. Swap for Void Staff vs heavy MR.' },
+  { n:5, emoji:'🎩', name:"Rabadon's Deathcap",  stat:'+35% Total AP',  why:'Multiplies all your AP by 35%. Your main late-game power spike — everything hurts more.' },
+  { n:6, emoji:'○',  name:'Void Staff',           stat:'40% Magic Pen',  why:'When enemies stack magic resist. Replace Shadowflame with this.' }
+];
+
+const ABILITIES = [
+  { key:'P', name:'Guerrilla Warfare', color:'#d4726a',
+    desc:'Stand still for 1.5 seconds (or stay in a brush) → invisible indefinitely. Enemies must get very close to reveal you. When you exit stealth, you gain +20–80% attack speed for 3 seconds.',
+    tip:'Plan big trades around the attack speed burst when you exit stealth. Hide in bush → wait for them to approach → pop out and burst with the speed bonus.' },
+  { key:'Q', name:'Blinding Dart', color:'#9b7fa0',
+    desc:'Shoots a dart that blinds the enemy for 2–3 seconds — they miss every single auto attack. Also deals magic damage (80% AP scaling). Q is also an auto-attack RESET: auto → Q immediately → auto again = 3 hits instantly.',
+    tip:"Q is your #1 tool vs auto-attack champions. If they can't auto, they can't fight you. Don't waste it on minions — save it for the right moment." },
+  { key:'W', name:'Move Quick', color:'#6a917a',
+    desc:'Passive: Bonus move speed when enemies haven't damaged you recently. Active: Speed burst for 3 seconds that cannot be removed by taking damage. ~17 second cooldown.',
+    tip:"The active W cannot be canceled by getting hit — use it to escape or reposition through fights. Don't hoard it, it comes back quickly." },
+  { key:'E', name:'Toxic Shot', color:'#c4a882',
+    desc:'⚠️ PASSIVE ONLY — you cannot press E. Every auto attack applies poison that deals bonus magic damage on hit and per second for 4 seconds. Maxing E increases the poison damage per tick.',
+    tip:'This is your core damage source. Every single auto attack poisons the enemy. Max this first in most matchups and keep attacking to refresh the poison duration.' },
+  { key:'R', name:'Noxious Trap', color:'#d4726a',
+    desc:'Place an invisible mushroom. ⚠️ Takes 1 second to arm. Enemies that step on it are slowed and poisoned for 4 seconds. Also grants vision. Stores up to 3 charges that recharge over time.',
+    tip:'Drop shrooms ahead of where enemies will run — not directly under their feet (1 second arming time). Two shrooms in the same spot is wasted. Spread them out.' }
+];
+
+const BASICS = [
+  { icon:'💰', title:'Last Hitting (CS)', tips:[
+    'Only attack a minion for the killing blow — that final hit gives you gold. Don\'t spam autos early!',
+    'Teemo has 500 range — use it to safely last-hit from farther than most top laners.',
+    'Don\'t spam Q on minions. Save your mana for poking the enemy champion.',
+    'Goal: 7 CS per minute = 70 at 10 minutes. Every 10 CS ≈ 200 gold.'
+  ]},
+  { icon:'⚔️', title:'Trading (How to Fight)', tips:[
+    'Combo: auto → Q immediately (resets your auto for a free extra hit) → keep autoing to stack poison.',
+    'Trade during the blind window (2–3 sec). Back off after it ends vs auto-attack champs.',
+    'After 3 hits on the same enemy, Press the Attack activates → 8% more damage.',
+    'Pop into the top bush after poking — minions stop aggro when they lose sight of you.'
+  ]},
+  { icon:'〰️', title:'Wave Management', tips:[
+    'Freeze the wave near your tower in a losing matchup — farm safely without risking death.',
+    'When winning: slow-push (let your wave build) then crash into their tower before backing.',
+    'When your laner backs: push the wave fast and deny them gold and XP.',
+    'Against hard counters (Olaf, Cass): freeze and survive. It\'s okay to just farm.'
+  ]},
+  { icon:'🍄', title:'Mushroom Placement', tips:[
+    '⚠️ Shrooms take 1 second to arm. Drop them ahead of where enemies will run, not under their feet.',
+    "Shrooms don't stack — two in the same spot wastes one. Always spread them out.",
+    'Key spots: Dragon/Baron pit entrance, river pixel bush, jungle corners where pathing hugs walls.',
+    'Save 1–2 charges as escape tools — drop behind you when being chased.',
+    'Your shrooms are wards. Swap trinket to Oracle Lens mid-game to clear enemy vision instead.'
+  ]},
+  { icon:'〇', title:'Stealth Tricks', tips:[
+    'Stand still 1.5 seconds → invisible. Enemies must get very close to spot you.',
+    'Exiting stealth gives a huge attack speed bonus. Plan burst trades around this timing.',
+    'The "where is Teemo" game: show yourself then vanish. They\'ll be afraid to walk up.',
+    'Enemy towers reveal you even in stealth. Don\'t rely on it near turrets.'
+  ]},
+  { icon:'🗺️', title:'Mid/Late Game — Split Push', tips:[
+    'After winning lane and taking tower, split push the opposite side from your team.',
+    'Mushroom every path between you and the enemy team so you see them coming.',
+    'If 2+ enemies come to stop you: run. Your team gets a free 4v3 fight.',
+    'Place shrooms around Dragon/Baron before they spawn — free vision is huge.',
+    "Don't teamfight unless necessary. Teemo isn't great in 5v5. Create side pressure instead."
+  ]}
+];
+
+// ─────────────────────────────────────────────────────
+// RENDER FUNCTIONS
+// ─────────────────────────────────────────────────────
+
+function renderChips() {
+  const el = document.getElementById('chips');
+  Object.keys(MATCHUPS).forEach(k => {
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.textContent = k;
+    chip.onclick = () => { document.getElementById('search-input').value = k; doSearch(); };
+    el.appendChild(chip);
+  });
+}
+
+function renderCounters() {
+  const bad = document.getElementById('bad-list');
+  COUNTERS_BAD.forEach(c => {
+    bad.innerHTML += `<div class="counter-row"><span class="wr-badge" style="background:var(--rose-soft);color:var(--rose)">${c.wr}</span><div><div class="counter-name">${c.name}</div><div class="counter-why">${c.why}</div></div></div>`;
+  });
+  const good = document.getElementById('good-list');
+  COUNTERS_GOOD.forEach(c => {
+    good.innerHTML += `<div class="counter-row"><span class="wr-badge" style="background:var(--sage-soft);color:var(--sage)">${c.wr}</span><div><div class="counter-name">${c.name}</div><div class="counter-why">${c.why}</div></div></div>`;
+  });
+}
+
+function renderItems() {
+  const el = document.getElementById('items-list');
+  BUILD_CORE.forEach(item => {
+    el.innerHTML += `
+      <div class="item-row">
+        <div class="item-num">${item.n}</div>
+        <div class="item-emoji">${item.emoji}</div>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-stat">${item.stat}</div>
+          <div class="item-why">${item.why}</div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderBasics() {
+  const el = document.getElementById('basics-list');
+  BASICS.forEach((s, i) => {
+    const id = `basic-${i}`;
+    const tips = s.tips.map(t => `<div class="tip"><span class="tip-dot">·</span><span>${t}</span></div>`).join('');
+    el.innerHTML += `
+      <div class="accordion" id="${id}">
+        <button class="accordion-btn" onclick="toggleAccordion('${id}')">
+          <span class="left"><span style="font-size:17px">${s.icon}</span><span>${s.title}</span></span>
+          <span class="accordion-icon">›</span>
+        </button>
+        <div class="accordion-body">${tips}</div>
+      </div>`;
+  });
+}
+
+function renderAbilities() {
+  const el = document.getElementById('abilities-list');
+  const colors = { P:'var(--rose-soft)', Q:'var(--mauve-soft)', W:'var(--sage-soft)', E:'var(--sand-soft)', R:'var(--rose-soft)' };
+  const textColors = { P:'var(--rose)', Q:'var(--mauve)', W:'var(--sage)', E:'var(--sand)', R:'var(--rose)' };
+  ABILITIES.forEach((a, i) => {
+    const id = `ability-${i}`;
+    el.innerHTML += `
+      <div class="accordion" id="${id}">
+        <button class="accordion-btn" onclick="toggleAccordion('${id}')">
+          <span class="left">
+            <span class="ability-key-badge" style="background:${colors[a.key]};color:${textColors[a.key]}">${a.key}</span>
+            <span>${a.name}</span>
+          </span>
+          <span class="accordion-icon">›</span>
+        </button>
+        <div class="accordion-body">
+          <p style="font-size:14px;color:var(--text);margin-bottom:10px;line-height:1.7">${a.desc}</p>
+          <div class="ability-tip">${a.tip}</div>
+        </div>
+      </div>`;
+  });
+}
+
+// ─────────────────────────────────────────────────────
+// INTERACTION
+// ─────────────────────────────────────────────────────
+
+function showTab(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleAccordion(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function setRole(r) {
+  document.getElementById('btn-top').classList.toggle('active', r === 'top');
+  document.getElementById('btn-support').classList.toggle('active', r === 'support');
+  document.getElementById('start-items').textContent = r === 'support' ? "Spellthief's Edge" : "Doran's Ring";
+  document.getElementById('support-card').style.display = r === 'support' ? 'block' : 'none';
+}
+
+function doSearch() {
+  const raw = document.getElementById('search-input').value.trim();
+  const key = raw.toLowerCase().replace(/['\s\-]/g, '');
+  const result = document.getElementById('matchup-result');
+  const m = MATCHUPS[key];
+
+  if (!m) {
+    result.style.display = 'block';
+    result.innerHTML = `
+      <div class="card" style="border-left:3px solid var(--sand)">
+        <h3>Not in database yet</h3>
+        <div class="tip"><span class="tip-dot">·</span><span>vs Melee: stay max range, poke forever, Q before they hit you</span></div>
+        <div class="tip"><span class="tip-dot">·</span><span>vs Tanks: build Liandry's — it burns % of max HP</span></div>
+        <div class="tip"><span class="tip-dot">·</span><span>vs Assassins: play near tower, mushroom escape routes</span></div>
+        <div class="tip"><span class="tip-dot">·</span><span>vs CC supports: buy Banshee's Veil to block their key ability</span></div>
+      </div>`;
+    return;
+  }
+
+  const threatClass = 'threat-' + m.threat;
+  const threatLabels = { easy:'Easy', medium:'Medium', hard:'Hard', extreme:'Extreme' };
+
+  result.style.display = 'block';
+  result.innerHTML = `
+    <div class="matchup-header">
+      <span class="matchup-name">${raw || key}</span>
+      <span class="badge ${threatClass}">${threatLabels[m.threat]}</span>
+      <span class="badge badge-muted">${m.type}</span>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--rose)">
+      <h3>How to play this lane</h3>
+      <p style="font-size:14px;line-height:1.7;color:#4a3838">${m.tip}</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card" style="border-left:3px solid var(--sage);margin-bottom:0">
+        <h3>Skill order</h3>
+        <div style="font-size:14px;font-weight:600;color:var(--sage)">${m.skillOrder}</div>
+      </div>
+      <div class="card" style="border-left:3px solid #e0a0a0;margin-bottom:0">
+        <h3>Don't</h3>
+        <div style="font-size:13px;color:#b05050">${m.avoid}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:10px;border-left:3px solid var(--mauve)">
+      <h3>Shroom placement</h3>
+      <div style="font-size:14px;color:var(--muted)">${m.shroom}</div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────
+renderChips();
+renderCounters();
+renderItems();
+renderBasics();
+renderAbilities();
+</script>
+</body>
+</html>
